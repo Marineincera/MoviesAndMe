@@ -1,3 +1,5 @@
+import moment from 'moment'
+import numeral from 'numeral'
 import React from 'react'
 import { StyleSheet, View, Text, ActivityIndicator, Image } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -25,24 +27,26 @@ class FilmDetail extends React.Component {
 
   _displayFilm(){
     console.log(this.state.film);
-    if(this.state.film != undefined){
+    const {film} = this.state
+    if(this.film != undefined){
       return(
         <ScrollView style={styles.scrollview_container}>
         <Image
           style={styles.image}
-          source={{uri: getImageFromApi(this.state.film.poster_path)}}
+          source={{uri: getImageFromApi(this.film.poster_path)}}
         />
-        <Text>{this.state.film.title}</Text>
-        <Text>{this.state.film.overview}</Text>
-      <Text>Sorti le {this.state.film.release_date}</Text>
-      <Text>Note: {this.state.film.vote_average}</Text>
-      <Text>Nombre de vote {this.state.film.vote_count}</Text>
-      <Text>Genre(s) :
-        {this.state.film.genres.map(function(genre){
+        <Text style={styles.title}>{this.film.title}</Text>
+        <Text style={styles.overview}>{this.film.overview}</Text>
+      <Text style={styles.infos}>Sorti le {moment(new Date(this.film.release_date)).format('DD/MM/YYYY')}</Text>
+      <Text style={styles.infos}>Note: {this.film.vote_average}</Text>
+      <Text style={styles.infos}>Nombre de vote {this.film.vote_count}</Text>
+      <Text style={styles.default_text}>Budget : {numeral(film.budget).format('0,0[.]00 $')}</Text>
+      <Text style={styles.infos}>Genre(s) :
+        {this.film.genres.map(function(genre){
           return genre.name;}).join("/")
         } 
-
       </Text>
+      <Text style={styles.infos}>Companie(s): {this.film.production_companies.map(function(companie){return companie.name;}).join("/")}</Text>
         </ScrollView>
       )
     }
@@ -71,7 +75,16 @@ class FilmDetail extends React.Component {
 
 const styles = StyleSheet.create({
   main_container: {
+    flex: 1
+  },
+  title: {
+    fontSize: 30,
     flex: 1,
+    textAlign: 'center',
+    flexWrap: 'wrap',
+    marginBottom: 10,
+    marginTop: 10
+    
   },
   loading_container: {
     position: 'absolute',
@@ -86,9 +99,13 @@ const styles = StyleSheet.create({
     flex: 1
   },
   image: {
-    width: 120,
+    width: 400,
     height: 180,
     margin: 5,
+  },
+  overview: {
+    fontStyle: 'italic',
+    marginBottom: 10
   }
 })
 
