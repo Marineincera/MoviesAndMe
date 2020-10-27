@@ -1,7 +1,9 @@
 import React from 'react'
 import { StyleSheet, View, Text, ActivityIndicator, Image } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
+import { connect } from 'react-redux'
 import {getFilmDetailFromApi, getImageFromApi} from '../API/TMDBApi'
+import{ Icon } from 'react-native-elements';
 
 class FilmDetail extends React.Component {
   constructor(props){
@@ -23,8 +25,30 @@ class FilmDetail extends React.Component {
     }
   }
 
+  _toggleFavorite() {
+    const action = {type: "TOGGLE_FAVORITE", value: this.state.film}
+    this.props.dispatch(action)
+  }
+
+
+  _displayFavoriteIcon(){
+    var color = '#BCBABA'
+    if(this.props.favoritesFilm.findIndex(item => item.id === this.state.film.id) !== -1){
+      color = '#F91111'
+    }
+    return (
+      <Icon 
+      name= 'favorite'
+      color={color}
+      />
+   
+    )
+    
+  }
+
   _displayFilm(){
     console.log(this.state.film);
+    console.log(this.props);
     if(this.state.film != undefined){
       return(
         <ScrollView style={styles.scrollview_container}>
@@ -33,6 +57,7 @@ class FilmDetail extends React.Component {
           source={{uri: getImageFromApi(this.state.film.poster_path)}}
         />
         <Text>{this.state.film.title}</Text>
+        <TouchableOpacity onPress={() => this._toggleFavorite()}>{this._displayFavoriteIcon()}</TouchableOpacity>
         <Text>{this.state.film.overview}</Text>
       <Text>Sorti le {this.state.film.release_date}</Text>
       <Text>Note: {this.state.film.vote_average}</Text>
@@ -48,6 +73,8 @@ class FilmDetail extends React.Component {
     }
   }
 
+
+
   componentDidMount(){
     getFilmDetailFromApi(this.props.route.params.idFilm).then(data => {
       this.setState({
@@ -56,6 +83,12 @@ class FilmDetail extends React.Component {
       })
     })
   }
+
+  componentDidUpdate() {
+    console.log('componentDidUpdate: ');
+    console.log((this.props.favoritesFilm));
+  }
+  
 
   render() {
     const idFilm = this.props.route.params.idFilm;
@@ -67,6 +100,7 @@ class FilmDetail extends React.Component {
     )
   }
 }
+
 
 
 const styles = StyleSheet.create({
@@ -92,7 +126,17 @@ const styles = StyleSheet.create({
   }
 })
 
+const mapStateToProps = (state) => {
+  return {
+    favoritesFilm: state.favoritesFilm
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch: (action) => { dispatch(action)}
+  }
+}
 
 
-
-export default FilmDetail
+export default connect(mapStateToProps, mapDispatchToProps)(FilmDetail)
