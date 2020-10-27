@@ -1,8 +1,9 @@
 import React from 'react'
-import { StyleSheet, View, Text, ActivityIndicator, Image, Button } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { StyleSheet, View, Text, ActivityIndicator, Image } from 'react-native'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import {getFilmDetailFromApi, getImageFromApi} from '../API/TMDBApi'
+import{ Icon } from 'react-native-elements';
 
 class FilmDetail extends React.Component {
   constructor(props){
@@ -29,6 +30,22 @@ class FilmDetail extends React.Component {
     this.props.dispatch(action)
   }
 
+
+  _displayFavoriteIcon(){
+    var color = '#BCBABA'
+    if(this.props.favoritesFilm.findIndex(item => item.id === this.state.film.id) !== -1){
+      color = '#F91111'
+    }
+    return (
+      <Icon 
+      name= 'favorite'
+      color={color}
+      />
+   
+    )
+    
+  }
+
   _displayFilm(){
     console.log(this.state.film);
     console.log(this.props);
@@ -40,7 +57,7 @@ class FilmDetail extends React.Component {
           source={{uri: getImageFromApi(this.state.film.poster_path)}}
         />
         <Text>{this.state.film.title}</Text>
-        <Button title="Favoris" onPress={() => this._toggleFavorite()}></Button>
+        <TouchableOpacity onPress={() => this._toggleFavorite()}>{this._displayFavoriteIcon()}</TouchableOpacity>
         <Text>{this.state.film.overview}</Text>
       <Text>Sorti le {this.state.film.release_date}</Text>
       <Text>Note: {this.state.film.vote_average}</Text>
@@ -55,6 +72,8 @@ class FilmDetail extends React.Component {
       )
     }
   }
+
+
 
   componentDidMount(){
     getFilmDetailFromApi(this.props.route.params.idFilm).then(data => {
