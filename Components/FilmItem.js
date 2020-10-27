@@ -1,8 +1,26 @@
 import React from 'react'
 import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import {getImageFromApi} from '../API/TMDBApi'
+import { Icon } from 'react-native-elements';
 
 class FilmItem extends React.Component {
+
+  _displayFavoriteIcon(){
+    var color = '#BCBABA'
+    if(this.props.isFilmFavorite){
+      color = '#F91111'
+    }
+    return (
+      <Icon 
+      name= 'favorite'
+      color={color}
+      />
+   
+    )
+    
+  }
+
+
   render() {
     const {film, displayDetailForFilm} = this.props
     return (
@@ -15,8 +33,9 @@ class FilmItem extends React.Component {
       />
       <View style={styles.content_container}>
         <View style={styles.header_container}>
+        {this._displayFavoriteIcon()}
           <Text style={styles.title_text}>{film.title}</Text>
-    <Text style={styles.vote_text}>{film.vote_average}</Text>
+          <Text style={styles.vote_text}>{film.vote_average}</Text>
         </View>
         <View style={styles.description_container}>
     <Text style={styles.description_text} numberOfLines={6}>{film.overview}</Text>
