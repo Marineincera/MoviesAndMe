@@ -32,6 +32,9 @@ function Home() {
     tabBarOptions={{
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',
+      activeBackgroundColor: '#DDDDDD',
+      inactiveBackgroundColor: '#FFFFFF',
+      showLabel: false
     }}>
     <Tab.Screen name="Search" component={Search}  />
     <Tab.Screen  name="Favorites" component={Favorites}/>
@@ -46,7 +49,7 @@ export default function App() {
           <Stack.Navigator>
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Search" component={Search} options={{ title: 'Search' }}/>
-            <Stack.Screen name="FilmDetail" component={FilmDetail}  options={{ title: 'FilmSetail' }}/>
+            <Stack.Screen name="FilmDetail" component={FilmDetail}  options={{ title: 'FilmDetail' }}/>
         </Stack.Navigator>       
       </NavigationContainer>
     </Provider>
