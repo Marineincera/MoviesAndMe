@@ -1,9 +1,10 @@
 import React from 'react'
-import { StyleSheet, View, Text, ActivityIndicator, Image } from 'react-native'
+import { StyleSheet, Share, View, Text, ActivityIndicator, Image } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import {getFilmDetailFromApi, getImageFromApi} from '../API/TMDBApi'
 import{ Icon } from 'react-native-elements';
+import Enlarge from '../Animations/Enlarge'
 
 class FilmDetail extends React.Component {
   constructor(props){
@@ -32,18 +33,41 @@ class FilmDetail extends React.Component {
 
 
   _displayFavoriteIcon(){
+    var shouldEnlarge = false
     var color = '#BCBABA'
     if(this.props.favoritesFilm.findIndex(item => item.id === this.state.film.id) !== -1){
       color = '#F91111'
+      shouldEnlarge = true
     }
     return (
-      <Icon 
-      name= 'favorite'
-      color={color}
-      />
-   
+      <Enlarge
+        shouldEnlarge={shouldEnlarge}>
+        <Icon 
+        name= 'favorite'
+        color={color}
+        />
+      </Enlarge>
     )
     
+  }
+
+  _shareFilm(){
+    const {film} = this.state
+    Share.share({title: film.title, message: film.overview})
+  }
+
+  _displayFloatingActionButton(){
+    const {film} = this.state
+    return(
+      <TouchableOpacity
+        style={styles.share_touchable_floatingactionbutton}
+        onPress={() => this._shareFilm()}>
+         <Icon 
+          name ='send'
+          />
+
+      </TouchableOpacity>
+    )
   }
 
   _displayFilm(){
@@ -96,6 +120,7 @@ class FilmDetail extends React.Component {
       <View style={styles.main_container}>
         {this._displayLoading()}
         {this._displayFilm()}
+        {this._displayFloatingActionButton()}
       </View>
     )
   }
@@ -123,6 +148,15 @@ const styles = StyleSheet.create({
     width: 120,
     height: 180,
     margin: 5,
+  },
+  share_touchable_floatingactionbutton: {
+    width: 60,
+    height: 60,
+    bottom: 30,
+},
+  icon:{
+    flex:1,
+    size: 0
   }
 })
 
